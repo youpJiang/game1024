@@ -50,18 +50,23 @@ inline void PrintChessboard() {
         PrintChessboardBorder();
     }
 }
+
 inline void PrintCover()
 {
-    Message("    _       __     ___    _ _    ");
-    Message("   / |     /  \\   |_  )  | | |   ");
-    Message("   | |    | () |   / /   |_  _|  ");
-    Message("  _|_|_   _\\__/   /___|   _|_|_  ");
-    Message("_|\"\"\"\"\"|_|\"\"\"\"\"|_|\"\"\"\"\"|_|\"\"\"\"\"| ");
-    Message("\"`-0-0-\'\"`-0-0-\'\"`-0-0-\'\"`-0-0-\' ");
+    Message("===================================");
+    Message("|         WELCOME TO GAME         |");
+    Message("|    _       __     ___    _ _    |");
+    Message("|   / |     /  \\   |_  )  | | |   |");
+    Message("|   | |    | () |   / /   |_  _|  |");
+    Message("|  _|_|_   _\\__/   /___|   _|_|_  |");
+    Message("|_|\"\"\"\"\"|_|\"\"\"\"\"|_|\"\"\"\"\"|_|\"\"\"\"\"| |");
+    Message("|\"`-0-0-\'\"`-0-0-\'\"`-0-0-\'\"`-0-0-\' |");
+    Message("===================================");
 }
+
 int main()
 {
-    Message("Welcome to 1024 game!");
+    
     PrintCover();
     PrintChessboard();
     return 0;
