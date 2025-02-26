@@ -6,3 +6,5 @@ move and merge the same number to reach "1024"!
 ## develop environment
 Ubuntu 20.04.4 LTS
 
+# TODO
+[bug] move function don't merge if insert a 0.
