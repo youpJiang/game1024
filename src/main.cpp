@@ -5,7 +5,7 @@
 #include "scene.hpp"
 
 
-const int CELL_WIDTH = 5; 
+
 
 inline void PrintCover()
 {
@@ -59,8 +59,10 @@ int main()
     //init game
     ChessBoard cb;
     //AskStart
-    AskStart();
+    // AskStart();
+    
     cb.Play();
+
     
     return 0;
 }
