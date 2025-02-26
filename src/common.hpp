@@ -14,4 +14,9 @@ inline void Message(std::string& str, bool lineFeed = true)
     Message(str.c_str(), lineFeed);
 }
 
+inline void Message(std::string&& str, bool lineFeed = true)
+{
+    Message(str.c_str(), lineFeed);
+}
+
 #endif  // MESSAGE_HPP
