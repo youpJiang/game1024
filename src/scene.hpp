@@ -27,6 +27,7 @@ private:
     void Left();
     void Right();
     void Move(int direction);
+    int RandomGenerate();
     void Merge(std::vector<int>& vec);
 
 public:
@@ -65,7 +66,10 @@ void ChessBoard::PrintChessboard() const{
 
             // print number and mediate
             Message(std::string(leftPadding, ' '), false);
-            Message(numberStr,false);
+            if("0" == numberStr)
+                Message(" ", false);
+            else
+                Message(numberStr,false);
             Message(std::string(rightPadding, ' '), false);
             Message("|",false);
         }
@@ -79,7 +83,7 @@ ChessBoard::ChessBoard()
 {
     _isWin = false;
     _chessBoard.resize(g_SIZE, std::vector<int>(g_SIZE,0));
-    _chessBoard = {{1,2,4,8},{1,4,8,2},{4,8,16,4},{8,8,4,1}};
+    _chessBoard = {{0,256,0,0},{4,0,0,128},{0,0,0,256},{32,0,64,16}};
 }
 
 void ChessBoard::Show()
@@ -116,6 +120,11 @@ void ChessBoard::Play()
         {
             exit(0);
         }
+        if(RandomGenerate())
+        {
+            Message("~~~~~~~ YOU LOSE! ~~~~~~~");
+            exit(0);
+        }
         Show();
         if(_isWin)
         {
@@ -133,8 +142,18 @@ void ChessBoard::Merge(std::vector<int>& vec)
         //delete 0,count++
         if(0 == *it)
         {
+            if(it+1 != vec.end() && *(it-1) == *(it+1))
+            {
+                *(it-1) *= 2;
+                it = vec.erase(it);
+                
+                paddingCount += 2 ;    
+            }
+            else
+            {
+                paddingCount++;
+            }
             it = vec.erase(it);
-            paddingCount++;
         }
         //vec[i] == vec[i+1]: delete & double. count++
         else if(it+1 != vec.end() && *it == *(it+1))
@@ -239,6 +258,32 @@ void ChessBoard::Right()
             _chessBoard[row][g_SIZE-col-1] = rowVec[col];
         }
     }
+}
+
+int ChessBoard::RandomGenerate()
+{
+    bool flag = false;
+    for(auto &row:_chessBoard)
+    {
+        for(auto &it:row)
+        {
+            if(0 == it)
+            {
+                it = 4;
+                flag = true;
+                break;
+            }
+        }
+        if(flag)
+            break;
+    }
+    if(!flag)
+    {
+        //no block to fill, you lose.
+        return 1;
+    }
+    else
+        return 0;
 }
 
 
