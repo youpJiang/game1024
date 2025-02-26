@@ -58,8 +58,8 @@ int main()
     PrintCover();
     //init game
     ChessBoard cb;
-    //AskStart
-    // AskStart();
+    // AskStart
+    AskStart();
     
     cb.Play();
 

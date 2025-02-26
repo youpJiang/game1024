@@ -1,2 +1,2 @@
 cd src
-g++ common.hpp scene.hpp main.cpp -o ../game1024
+g++ utils.hpp common.hpp scene.hpp main.cpp -o ../game1024
