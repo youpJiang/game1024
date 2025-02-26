@@ -25,6 +25,7 @@ private:
     void Down();
     void Left();
     void Right();
+    void Move(int direction);
     void Merge(std::vector<int>& vec);
 
 public:
@@ -76,27 +77,46 @@ void ChessBoard::PrintChessboard() const{
 ChessBoard::ChessBoard()
 {
     _isWin = false;
-    _chessBoard.resize(g_SIZE, std::vector<int>(g_SIZE,1));
+    _chessBoard.resize(g_SIZE, std::vector<int>(g_SIZE,0));
+    _chessBoard = {{1,2,4,8},{1,4,8,2},{4,8,16,4},{8,8,4,1}};
 }
 
 void ChessBoard::Show()
 {
     // system("clear");
     PrintChessboard();
-    Up();
-    PrintChessboard();
-    Up();
-    PrintChessboard();
-    Up();
-    PrintChessboard();
-    Up();
-    PrintChessboard();
 }
 
 void ChessBoard::Play()
 {
     Show();
-
+    char key = '\0';
+    
+    while(1)
+    {
+        key = static_cast<char>(getchar());
+        if('w' == key)
+        {
+            Up();
+        }
+        else if('s' == key)
+        {
+            Down();
+        }
+        else if('a' == key)
+        {
+            Left();
+        }
+        else if('d' == key)
+        {
+            Right();
+        }
+        Show();
+        if(_isWin)
+        {
+            Message("*******YOU WIN! *****");
+        }
+    }
 }
 
 void ChessBoard::Merge(std::vector<int>& vec)
@@ -166,6 +186,71 @@ void ChessBoard::Up()
         }
     }
 }
+
+void ChessBoard::Down()
+{
+    //traverse every column
+    for(int col = 0; col < g_SIZE; ++col)
+    {
+        //to vector
+        std::vector<int> colVec;
+        for(int row = g_SIZE-1 ; row > -1; --row)
+        {
+            colVec.push_back(_chessBoard[row][col]);
+        }
+        //call Merge
+        Merge(colVec);
+        //fill back
+        for(int row = g_SIZE-1 ; row > -1; --row)
+        {
+            _chessBoard[g_SIZE-row-1][col] = colVec[row];
+        }
+    }
+}
+
+void ChessBoard::Left()
+{
+    //traverse every row
+    for(int row = 0; row < g_SIZE; ++row)
+    {
+        //to vector
+        std::vector<int> rowVec;
+        for(int col = 0 ; col < g_SIZE; ++col)
+        {
+            rowVec.push_back(_chessBoard[row][col]);
+        }
+        //call Merge
+        Merge(rowVec);
+        //fill back
+        for(int col = 0 ; col < g_SIZE; ++col)
+        {
+            _chessBoard[row][col] = rowVec[col];
+        }
+    }
+}
+
+void ChessBoard::Right()
+{
+    //traverse every row
+    for(int row = 0; row < g_SIZE; ++row)
+    {
+        //to vector
+        std::vector<int> rowVec;
+        for(int col = g_SIZE ; col > -1; --col)
+        {
+            rowVec.push_back(_chessBoard[row][col]);
+        }
+        //call Merge
+        Merge(rowVec);
+        //fill back
+        for(int col = 0 ; col < g_SIZE; ++col)
+        {
+            _chessBoard[row][g_SIZE-col-1] = rowVec[col];
+        }
+    }
+}
+
+
 
 
 
