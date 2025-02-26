@@ -5,6 +5,7 @@
 #include <iomanip>
 
 #include "common.hpp"
+#include "utils.hpp"
 
 const int g_SIZE = 4;
 const int g_CELL_WIDTH = 5; 
@@ -83,7 +84,7 @@ ChessBoard::ChessBoard()
 
 void ChessBoard::Show()
 {
-    // system("clear");
+    system("clear");
     PrintChessboard();
 }
 
@@ -94,7 +95,7 @@ void ChessBoard::Play()
     
     while(1)
     {
-        key = static_cast<char>(getchar());
+        key = getch();
         if('w' == key)
         {
             Up();
@@ -111,24 +112,21 @@ void ChessBoard::Play()
         {
             Right();
         }
+        else if('q' == key)
+        {
+            exit(0);
+        }
         Show();
         if(_isWin)
         {
-            Message("*******YOU WIN! *****");
+            Message("******* YOU WIN! ******");
+            exit(0);
         }
     }
 }
 
 void ChessBoard::Merge(std::vector<int>& vec)
 {
-    // Message("Before:");
-    // for(auto &it:vec)
-    // {
-    //     std::cout << it <<' ';
-    // }
-    // std::cout << std::endl;
-
-
     int paddingCount = 0;
     for(auto it = vec.begin(); it != vec.end();)
     {
@@ -157,13 +155,6 @@ void ChessBoard::Merge(std::vector<int>& vec)
     {
         vec.push_back(0);
     }
-    
-    // Message("After:");
-    // for(auto &it:vec)
-    // {
-    //     std::cout << it <<' ';
-    // }
-    // std::cout << std::endl;
 }
 
 void ChessBoard::Up()
