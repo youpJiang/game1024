@@ -18,6 +18,7 @@ class ChessBoard
 private:
     std::vector<std::vector<int>> _chessBoard;
     bool _isWin;
+    int _randomSeed = 0;
 
     void PrintChessboard() const;
     void Show();
@@ -83,7 +84,7 @@ ChessBoard::ChessBoard()
 {
     _isWin = false;
     _chessBoard.resize(g_SIZE, std::vector<int>(g_SIZE,0));
-    _chessBoard = {{0,256,0,0},{4,0,0,128},{0,0,0,256},{32,0,64,16}};
+    _chessBoard = {{0,2,0,0},{2,0,0,0},{0,0,0,0},{0,0,0,0}};
 }
 
 void ChessBoard::Show()
@@ -269,7 +270,9 @@ int ChessBoard::RandomGenerate()
         {
             if(0 == it)
             {
-                it = 4;
+                it = (0 == _randomSeed)? 4 : 2;
+                _randomSeed++;
+                _randomSeed %= 10;
                 flag = true;
                 break;
             }
