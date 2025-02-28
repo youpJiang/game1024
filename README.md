@@ -1,8 +1,10 @@
 # game1024
 1024 games with C++ code.
 
-## game target
-move and merge the same number to reach "1024"!
+## quikly start
+1. sh build.sh
+2. ./game1024
+   
 ## develop environment
 Ubuntu 20.04.4 LTS
 
