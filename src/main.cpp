@@ -25,7 +25,7 @@ inline void AskStart()
     Message("Please select:");
     Message("[1] Start Game    [2] Exit ");
     std::string input;
-    
+
     do{
         try{
             std::cin >> input;
@@ -60,9 +60,9 @@ int main()
     ChessBoard cb;
     // AskStart
     AskStart();
-    
+
     cb.Play();
 
-    
+
     return 0;
 }
