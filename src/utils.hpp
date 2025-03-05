@@ -4,6 +4,7 @@
 #include <termio.h>
 #include <cstdio>
 #include <fcntl.h>
+#include <iostream>
 
 inline char getch(void)
 {
@@ -21,6 +22,9 @@ inline char getch(void)
         return -1;
     }
     c = getchar();
+    while (c == '\n' || c == '\r') {  // 如果是换行符或回车符，继续读取
+        c = getchar();
+    }
     if (c == 27)  /* ESC返回27，上下左右为(27,91,xx) 与ESC的27冲突 */
     {
         int back_flags = fcntl(fd, F_GETFL);
@@ -29,11 +33,11 @@ inline char getch(void)
         c = getchar();
         if (c == EOF)
         {
-            c = 27; 
+            c = 27;
         }
         else
         {
-            while ( (c = getchar()) != EOF) 
+            while ( (c = getchar()) != EOF)
             {
             }
         }

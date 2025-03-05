@@ -8,10 +8,9 @@
 #include "utils.hpp"
 
 const int g_SIZE = 4;
-const int g_CELL_WIDTH = 5; 
+const int g_CELL_WIDTH = 5;
 
 inline void PrintChessboardBorder();
-void Merge(std::vector<int>& vec);
 
 class ChessBoard
 {
@@ -23,13 +22,12 @@ private:
     void PrintChessboard() const;
     void Show();
 
-    void Up();
-    void Down();
-    void Left();
-    void Right();
-    void Move(int direction);
-    int RandomGenerate();
-    void Merge(std::vector<int>& vec);
+    bool Up();
+    bool Down();
+    bool Left();
+    bool Right();
+    int RandomGenerate(bool&);
+    bool Merge(std::vector<int>& vec);
 
 public:
     ChessBoard();
@@ -97,31 +95,39 @@ void ChessBoard::Play()
 {
     Show();
     char key = '\0';
-    
     while(1)
     {
+        bool isMove = false;
         key = getch();
         if('w' == key)
         {
-            Up();
+            if(Up())
+                isMove = true;
         }
         else if('s' == key)
         {
-            Down();
+            if(Down())
+                isMove = true;
         }
         else if('a' == key)
         {
-            Left();
+            if(Left())
+                isMove = true;
         }
         else if('d' == key)
         {
-            Right();
+            if(Right())
+                isMove = true;
         }
         else if('q' == key)
         {
             exit(0);
         }
-        if(RandomGenerate())
+        else{
+            Message("Invalid input! Please try again.");
+            continue;
+        }
+        if(RandomGenerate(isMove))
         {
             Message("~~~~~~~ YOU LOSE! ~~~~~~~");
             exit(0);
@@ -135,20 +141,21 @@ void ChessBoard::Play()
     }
 }
 
-void ChessBoard::Merge(std::vector<int>& vec)
+bool ChessBoard::Merge(std::vector<int>& vec)
 {
+    bool isMove = false;
     int paddingCount = 0;
     for(auto it = vec.begin(); it != vec.end();)
     {
         //delete 0,count++
         if(0 == *it)
         {
+            isMove = true;
             if(it+1 != vec.end() && *(it-1) == *(it+1))
             {
                 *(it-1) *= 2;
                 it = vec.erase(it);
-                
-                paddingCount += 2 ;    
+                paddingCount += 2 ;
             }
             else
             {
@@ -159,6 +166,7 @@ void ChessBoard::Merge(std::vector<int>& vec)
         //vec[i] == vec[i+1]: delete & double. count++
         else if(it+1 != vec.end() && *it == *(it+1))
         {
+            isMove = true;
             *it *= 2;
             if(1024 == *it)
                 _isWin = true;
@@ -175,10 +183,14 @@ void ChessBoard::Merge(std::vector<int>& vec)
     {
         vec.push_back(0);
     }
+    if(4 == paddingCount)
+        isMove = false;
+    return isMove;
 }
 
-void ChessBoard::Up()
+bool ChessBoard::Up()
 {
+    bool isMove = false;
     //traverse every column
     for(int col = 0; col < g_SIZE; ++col)
     {
@@ -189,17 +201,22 @@ void ChessBoard::Up()
             colVec.push_back(_chessBoard[row][col]);
         }
         //call Merge
-        Merge(colVec);
+        if(Merge(colVec))
+        {
+            isMove = true;
+        }
         //fill back
         for(int row = 0 ; row < g_SIZE; ++row)
         {
             _chessBoard[row][col] = colVec[row];
         }
     }
+    return isMove;
 }
 
-void ChessBoard::Down()
+bool ChessBoard::Down()
 {
+    bool isMove = false;
     //traverse every column
     for(int col = 0; col < g_SIZE; ++col)
     {
@@ -210,17 +227,22 @@ void ChessBoard::Down()
             colVec.push_back(_chessBoard[row][col]);
         }
         //call Merge
-        Merge(colVec);
+        if(Merge(colVec))
+        {
+            isMove = true;
+        }
         //fill back
         for(int row = g_SIZE-1 ; row > -1; --row)
         {
             _chessBoard[g_SIZE-row-1][col] = colVec[row];
         }
     }
+    return isMove;
 }
 
-void ChessBoard::Left()
+bool ChessBoard::Left()
 {
+    bool isMove = false;
     //traverse every row
     for(int row = 0; row < g_SIZE; ++row)
     {
@@ -231,18 +253,24 @@ void ChessBoard::Left()
             rowVec.push_back(_chessBoard[row][col]);
         }
         //call Merge
-        Merge(rowVec);
+        if(Merge(rowVec))
+        {
+            isMove = true;
+        }
         //fill back
         for(int col = 0 ; col < g_SIZE; ++col)
         {
             _chessBoard[row][col] = rowVec[col];
         }
     }
+    return isMove;
 }
 
-void ChessBoard::Right()
+bool ChessBoard::Right()
 {
+    bool isMove = false;
     //traverse every row
+
     for(int row = 0; row < g_SIZE; ++row)
     {
         //to vector
@@ -252,23 +280,27 @@ void ChessBoard::Right()
             rowVec.push_back(_chessBoard[row][col]);
         }
         //call Merge
-        Merge(rowVec);
+        if(Merge(rowVec))
+        {
+            isMove = true;
+        }
         //fill back
         for(int col = 0 ; col < g_SIZE; ++col)
         {
             _chessBoard[row][g_SIZE-col-1] = rowVec[col];
         }
     }
+    return isMove;
 }
 
-int ChessBoard::RandomGenerate()
+int ChessBoard::RandomGenerate(bool& isMove)
 {
     bool flag = false;
     for(auto &row:_chessBoard)
     {
         for(auto &it:row)
         {
-            if(0 == it)
+            if(0 == it && isMove)
             {
                 it = (0 == _randomSeed)? 4 : 2;
                 _randomSeed++;
