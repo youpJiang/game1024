@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <iomanip>
+#include <unistd.h>
 
 #include "common.hpp"
 #include "utils.hpp"
@@ -127,6 +128,11 @@ void ChessBoard::Play()
             Message("Invalid input! Please try again.");
             continue;
         }
+        if(isMove)
+            Message("move!");
+        else
+            Message("hold!");
+        sleep(2);
         if(RandomGenerate(isMove))
         {
             Message("~~~~~~~ YOU LOSE! ~~~~~~~");
@@ -147,15 +153,22 @@ bool ChessBoard::Merge(std::vector<int>& vec)
     int paddingCount = 0;
     for(auto it = vec.begin(); it != vec.end();)
     {
-        //delete 0,count++
+        //case:0
         if(0 == *it)
         {
-            isMove = true;
+            //zero between two same non-zero numbers.
             if(it+1 != vec.end() && *(it-1) == *(it+1))
             {
+                isMove = true;
                 *(it-1) *= 2;
                 it = vec.erase(it);
                 paddingCount += 2 ;
+            }
+            //zero before a non-zero number.
+            else if(it+1 != vec.end() && 0 != *(it+1))
+            {
+                isMove = true;
+                paddingCount++;
             }
             else
             {
@@ -163,7 +176,7 @@ bool ChessBoard::Merge(std::vector<int>& vec)
             }
             it = vec.erase(it);
         }
-        //vec[i] == vec[i+1]: delete & double. count++
+        //case:vec[i] == vec[i+1]-> delete the second & double the first. count++
         else if(it+1 != vec.end() && *it == *(it+1))
         {
             isMove = true;
@@ -300,12 +313,15 @@ int ChessBoard::RandomGenerate(bool& isMove)
     {
         for(auto &it:row)
         {
-            if(0 == it && isMove)
+            if(0 == it)
             {
-                it = (0 == _randomSeed)? 4 : 2;
-                _randomSeed++;
-                _randomSeed %= 10;
                 flag = true;
+                if(isMove)
+                {
+                    it = (0 == _randomSeed)? 4 : 2;
+                    _randomSeed++;
+                    _randomSeed %= 10;
+                }
                 break;
             }
         }
