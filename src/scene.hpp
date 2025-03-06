@@ -5,22 +5,22 @@
 #include <iomanip>
 #include <unistd.h>
 #include <cstdlib>
+#include <ctime>
 
 #include "common.hpp"
 #include "utils.hpp"
 
-const int g_SIZE = 4;
-const int g_CELL_WIDTH = 5;
-
-inline void PrintChessboardBorder();
 
 class ChessBoard
 {
 private:
+    const int _size = 4;
+    const int _cell_width = 5;
     std::vector<std::vector<int>> _chessBoard;
     bool _isWin;
-    int _randomSeed24 = 0;
+    int _randomSeed24 = 3;
 
+    void PrintChessboardBorder() const;
     void PrintChessboard() const;
     void Show();
 
@@ -28,7 +28,7 @@ private:
     bool Down();
     bool Left();
     bool Right();
-    int RandomGenerate(bool&);
+    int RandomGenerate(bool isMove = true);
     bool Merge(std::vector<int>& vec);
 
 public:
@@ -36,15 +36,13 @@ public:
     // ~ChessBoard();
 
     void Play();
-
-
 };
 
-inline void PrintChessboardBorder()
+void ChessBoard::PrintChessboardBorder() const
 {
     Message("+", false);
-    for (int i = 0; i < g_SIZE; ++i) {
-        Message(std::string(g_CELL_WIDTH, '-'), false);
+    for (int i = 0; i < _size; ++i) {
+        Message(std::string(_cell_width, '-'), false);
         Message("+", false);
     }
     Message("");
@@ -54,16 +52,16 @@ void ChessBoard::PrintChessboard() const{
     PrintChessboardBorder();
 
     // print the whole chessborad.
-    for (int i = 0; i < g_SIZE; ++i) {
+    for (int i = 0; i < _size; ++i) {
         Message("|", false);
-        for (int j = 0; j < g_SIZE; ++j) {
+        for (int j = 0; j < _size; ++j) {
             int number = _chessBoard[i][j];
             std::string numberStr = std::to_string(number);
             int numberWidth = numberStr.length();
 
             // calculate padding.
-            int leftPadding = (g_CELL_WIDTH - numberWidth) / 2;
-            int rightPadding = g_CELL_WIDTH - numberWidth - leftPadding;
+            int leftPadding = (_cell_width - numberWidth) / 2;
+            int rightPadding = _cell_width - numberWidth - leftPadding;
 
             // print number and mediate
             Message(std::string(leftPadding, ' '), false);
@@ -80,11 +78,13 @@ void ChessBoard::PrintChessboard() const{
     }
 }
 
-ChessBoard::ChessBoard()
+ChessBoard::ChessBoard():_isWin(false)
 {
-    _isWin = false;
-    _chessBoard.resize(g_SIZE, std::vector<int>(g_SIZE,0));
-    _chessBoard = {{0,2,0,0},{2,0,0,0},{0,0,0,0},{0,0,0,0}};
+    _chessBoard.resize(_size, std::vector<int>(_size,0));
+
+    //init two number
+    RandomGenerate();
+    RandomGenerate();
 }
 
 void ChessBoard::Show()
@@ -205,11 +205,11 @@ bool ChessBoard::Up()
 {
     bool isMove = false;
     //traverse every column
-    for(int col = 0; col < g_SIZE; ++col)
+    for(int col = 0; col < _size; ++col)
     {
         //to vector
         std::vector<int> colVec;
-        for(int row = 0 ; row < g_SIZE; ++row)
+        for(int row = 0 ; row < _size; ++row)
         {
             colVec.push_back(_chessBoard[row][col]);
         }
@@ -219,7 +219,7 @@ bool ChessBoard::Up()
             isMove = true;
         }
         //fill back
-        for(int row = 0 ; row < g_SIZE; ++row)
+        for(int row = 0 ; row < _size; ++row)
         {
             _chessBoard[row][col] = colVec[row];
         }
@@ -231,11 +231,11 @@ bool ChessBoard::Down()
 {
     bool isMove = false;
     //traverse every column
-    for(int col = 0; col < g_SIZE; ++col)
+    for(int col = 0; col < _size; ++col)
     {
         //to vector
         std::vector<int> colVec;
-        for(int row = g_SIZE-1 ; row > -1; --row)
+        for(int row = _size-1 ; row > -1; --row)
         {
             colVec.push_back(_chessBoard[row][col]);
         }
@@ -245,9 +245,9 @@ bool ChessBoard::Down()
             isMove = true;
         }
         //fill back
-        for(int row = g_SIZE-1 ; row > -1; --row)
+        for(int row = _size-1 ; row > -1; --row)
         {
-            _chessBoard[g_SIZE-row-1][col] = colVec[row];
+            _chessBoard[_size-row-1][col] = colVec[row];
         }
     }
     return isMove;
@@ -257,11 +257,11 @@ bool ChessBoard::Left()
 {
     bool isMove = false;
     //traverse every row
-    for(int row = 0; row < g_SIZE; ++row)
+    for(int row = 0; row < _size; ++row)
     {
         //to vector
         std::vector<int> rowVec;
-        for(int col = 0 ; col < g_SIZE; ++col)
+        for(int col = 0 ; col < _size; ++col)
         {
             rowVec.push_back(_chessBoard[row][col]);
         }
@@ -271,7 +271,7 @@ bool ChessBoard::Left()
             isMove = true;
         }
         //fill back
-        for(int col = 0 ; col < g_SIZE; ++col)
+        for(int col = 0 ; col < _size; ++col)
         {
             _chessBoard[row][col] = rowVec[col];
         }
@@ -284,11 +284,11 @@ bool ChessBoard::Right()
     bool isMove = false;
     //traverse every row
 
-    for(int row = 0; row < g_SIZE; ++row)
+    for(int row = 0; row < _size; ++row)
     {
         //to vector
         std::vector<int> rowVec;
-        for(int col = g_SIZE ; col > -1; --col)
+        for(int col = _size ; col > -1; --col)
         {
             rowVec.push_back(_chessBoard[row][col]);
         }
@@ -298,15 +298,15 @@ bool ChessBoard::Right()
             isMove = true;
         }
         //fill back
-        for(int col = 0 ; col < g_SIZE; ++col)
+        for(int col = 0 ; col < _size; ++col)
         {
-            _chessBoard[row][g_SIZE-col-1] = rowVec[col];
+            _chessBoard[row][_size-col-1] = rowVec[col];
         }
     }
     return isMove;
 }
 
-int ChessBoard::RandomGenerate(bool& isMove)
+int ChessBoard::RandomGenerate(bool isMove)
 {
     std::vector<int> zeroBlocks;
     bool flag = false;
@@ -333,9 +333,9 @@ int ChessBoard::RandomGenerate(bool& isMove)
         return 1;
     }
     //generate a position randomly and fill a number
-    else
+    else if(isMove)
     {
-        std::srand(3); //set random seed.
+        std::srand(std::time(0)); //set random seed.
         int randomIndexVec = rand() % zeroBlocks.size();
         // std::cout << "zeroBlocks.size() is :" << zeroBlocks.size() << std::endl;
         // std::cout << "randomIndexVec is :" << randomIndexVec << std::endl;
@@ -349,14 +349,10 @@ int ChessBoard::RandomGenerate(bool& isMove)
         _chessBoard[insertRow][insertCol] = (0 == _randomSeed24)? 4 : 2;
         _randomSeed24++;
         _randomSeed24 %= 10;
-        return 0;
+
     }
-
+    return 0;
 }
-
-
-
-
 
 
 
