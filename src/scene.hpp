@@ -4,6 +4,7 @@
 #include <vector>
 #include <iomanip>
 #include <unistd.h>
+#include <cstdlib>
 
 #include "common.hpp"
 #include "utils.hpp"
@@ -18,7 +19,7 @@ class ChessBoard
 private:
     std::vector<std::vector<int>> _chessBoard;
     bool _isWin;
-    int _randomSeed = 0;
+    int _randomSeed24 = 0;
 
     void PrintChessboard() const;
     void Show();
@@ -128,11 +129,10 @@ void ChessBoard::Play()
             Message("Invalid input! Please try again.");
             continue;
         }
-        if(isMove)
-            Message("move!");
-        else
-            Message("hold!");
-        sleep(2);
+        // if(isMove)
+        //     Message("move!");
+        // else
+        //     Message("hold!");
         if(RandomGenerate(isMove))
         {
             Message("~~~~~~~ YOU LOSE! ~~~~~~~");
@@ -308,33 +308,50 @@ bool ChessBoard::Right()
 
 int ChessBoard::RandomGenerate(bool& isMove)
 {
+    std::vector<int> zeroBlocks;
     bool flag = false;
-    for(auto &row:_chessBoard)
+    for(int row = 0; row < 4; ++row)
     {
-        for(auto &it:row)
+        for(int col = 0; col < 4; ++col)
         {
-            if(0 == it)
+            if(0 == _chessBoard[row][col])
             {
+                zeroBlocks.push_back(4*row+col);
                 flag = true;
-                if(isMove)
-                {
-                    it = (0 == _randomSeed)? 4 : 2;
-                    _randomSeed++;
-                    _randomSeed %= 10;
-                }
-                break;
+                // if(isMove)
+                // {
+                //     it = (0 == _randomSeed)? 4 : 2;
+                //     _randomSeed++;
+                //     _randomSeed %= 10;
+                // }
             }
         }
-        if(flag)
-            break;
     }
     if(!flag)
     {
         //no block to fill, you lose.
         return 1;
     }
+    //generate a position randomly and fill a number
     else
+    {
+        std::srand(3); //set random seed.
+        int randomIndexVec = rand() % zeroBlocks.size();
+        // std::cout << "zeroBlocks.size() is :" << zeroBlocks.size() << std::endl;
+        // std::cout << "randomIndexVec is :" << randomIndexVec << std::endl;
+        int randomIndexBoard = zeroBlocks[randomIndexVec];
+        // std::cout << "randomIndexBoard is :" << randomIndexBoard << std::endl;
+        int insertRow = 0;
+        int insertCol = 0;
+        getRowColFromIndexBoard(randomIndexBoard, insertRow, insertCol);
+        // std::cout << "insertRow is :" << insertRow << std::endl;
+        // std::cout << "insertCol is :" << insertCol << std::endl;
+        _chessBoard[insertRow][insertCol] = (0 == _randomSeed24)? 4 : 2;
+        _randomSeed24++;
+        _randomSeed24 %= 10;
         return 0;
+    }
+
 }
 
 
