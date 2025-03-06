@@ -6,6 +6,13 @@
 #include <fcntl.h>
 #include <iostream>
 
+inline void getRowColFromIndexBoard(int randomIndexBoard,int &insertRow,int &insertCol)
+{
+    insertRow = randomIndexBoard / 4;
+    insertCol = randomIndexBoard % 4;
+    return ;
+}
+
 inline char getch(void)
 {
     struct termios tmtemp, tm;
