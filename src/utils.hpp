@@ -1,11 +1,21 @@
 #ifndef UTILS_HPP
 #define UTILS_HPP
 
+#ifdef _WIN32
+#include <windows.h>
+#include <conio.h>
+#else
 #include <termio.h>
-#include <cstdio>
 #include <fcntl.h>
+#endif //_WIN32
+
+#include <cstdio>
 #include <iostream>
 
+/// @brief 线性索引转换为二维坐标(4*4)
+/// @param randomIndexBoard 线性索引
+/// @param insertRow 行坐标
+/// @param insertCol 列坐标
 inline void getRowColFromIndexBoard(int randomIndexBoard,int &insertRow,int &insertCol)
 {
     insertRow = randomIndexBoard / 4;
@@ -13,7 +23,34 @@ inline void getRowColFromIndexBoard(int randomIndexBoard,int &insertRow,int &ins
     return ;
 }
 
-inline char getch(void)
+#ifdef _WIN32
+inline char myGetch(void)
+{
+    int c = _getch();
+    
+    // 如果是回车和换行，继续读取
+    while (c == '\n' || c == '\r') {
+        c = _getch();
+    }
+    // 处理ESC键
+    if (c == 27) {
+        if (!_kbhit()) {
+            return 27;  // 如果没有后续按键，就是单独的ESC键
+        }
+        else {
+            // 清空输入缓冲区
+            while (_kbhit()) {
+                _getch();
+            }
+        }
+    }
+    return static_cast<char>(c);
+}
+#else
+/// @brief 获取终端输入
+/// @param void
+/// @return 输入字母
+inline char myGetch(void)
 {
     struct termios tmtemp, tm;
     int c;
@@ -56,5 +93,5 @@ inline char getch(void)
     }
     return static_cast<char>(c);
 }
-
+#endif // _WIN32
 #endif // UTILS_HPP
