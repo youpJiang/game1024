@@ -18,7 +18,6 @@ private:
     const int _cell_width = 5;
     std::vector<std::vector<int>> _chessBoard;
     bool _isWin;
-    int _randomSeed24 = 3;
 
     void PrintChessboardBorder() const;
     void PrintChessboard() const;
@@ -346,10 +345,7 @@ int ChessBoard::RandomGenerate(bool isMove)
         getRowColFromIndexBoard(randomIndexBoard, insertRow, insertCol);
         // std::cout << "insertRow is :" << insertRow << std::endl;
         // std::cout << "insertCol is :" << insertCol << std::endl;
-        _chessBoard[insertRow][insertCol] = (0 == _randomSeed24)? 4 : 2;
-        _randomSeed24++;
-        _randomSeed24 %= 10;
-
+        _chessBoard[insertRow][insertCol] = (0 == (rand() % 10))? 4 : 2;
     }
     return 0;
 }
