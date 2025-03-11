@@ -89,7 +89,11 @@ ChessBoard::ChessBoard():_isWin(false)
 
 void ChessBoard::Show()
 {
+    #ifdef _WIN32
+    system("cls");
+    #else
     system("clear");
+    #endif //_WIN32
     PrintChessboard();
 }
 
@@ -100,7 +104,7 @@ void ChessBoard::Play()
     while(1)
     {
         bool isMove = false;
-        key = getch();
+        key = myGetch();
         if('w' == key)
         {
             if(Up())
@@ -288,7 +292,7 @@ bool ChessBoard::Right()
     {
         //to vector
         std::vector<int> rowVec;
-        for(int col = _size ; col > -1; --col)
+        for(int col = _size-1 ; col > -1; --col)
         {
             rowVec.push_back(_chessBoard[row][col]);
         }
