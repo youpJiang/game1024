@@ -2,6 +2,7 @@
 #define SCENE_HPP
 
 #include <vector>
+#include <unordered_map>
 #include <iomanip>
 #include <unistd.h>
 #include <cstdlib>
@@ -14,9 +15,12 @@
 class ChessBoard
 {
 private:
+    std::vector<std::vector<int>> _chessBoard;
     const int _size = 4;
     const int _cell_width = 5;
-    std::vector<std::vector<int>> _chessBoard;
+    int _score;  //target+score: 1024+100,512+80,256+50,128+30,64+15,32+10,16+5,8+3,4+2
+    int _score_record;
+    std::unordered_map<int, int> _score_map;
     bool _isWin;
 
     void PrintChessboardBorder() const;
@@ -29,6 +33,7 @@ private:
     bool Right();
     int RandomGenerate(bool isMove = true);
     bool Merge(std::vector<int>& vec);
+    void CalScore(int number);
 
 public:
     ChessBoard();
@@ -77,10 +82,21 @@ void ChessBoard::PrintChessboard() const{
     }
 }
 
-ChessBoard::ChessBoard():_isWin(false)
+ChessBoard::ChessBoard():_isWin(false), _score(0)
 {
     _chessBoard.resize(_size, std::vector<int>(_size,0));
 
+    _score_map = {
+        {1024,100},
+        {512,80},
+        {256,50},
+        {128,30},
+        {64,20},
+        {32,10},
+        {16,5},
+        {8,3},
+        {4,2}
+    };
     //init two number
     RandomGenerate();
     RandomGenerate();
@@ -89,6 +105,8 @@ ChessBoard::ChessBoard():_isWin(false)
 void ChessBoard::Show()
 {
     system("clear");
+    Message("Current Score: ", false);
+    std::cout << _score << std::endl;
     PrintChessboard();
 }
 
@@ -160,6 +178,7 @@ bool ChessBoard::Merge(std::vector<int>& vec)
             {
                 isMove = true;
                 *(it-1) *= 2;
+                CalScore(*(it-1));
                 it = vec.erase(it);
                 paddingCount += 2 ;
             }
@@ -180,8 +199,7 @@ bool ChessBoard::Merge(std::vector<int>& vec)
         {
             isMove = true;
             *it *= 2;
-            if(1024 == *it)
-                _isWin = true;
+            CalScore(*it);
             it = vec.erase(it+1);
             paddingCount++;
         }
@@ -198,6 +216,30 @@ bool ChessBoard::Merge(std::vector<int>& vec)
     if(4 == paddingCount)
         isMove = false;
     return isMove;
+}
+
+void ChessBoard::CalScore(int number)
+{
+    switch(number)
+            {
+                case 1024:
+                    _isWin = true;
+                    _score += _score_map[number];
+                    break;
+                case 512:
+                case 256:
+                case 128:
+                case 64:
+                case 32:
+                case 16:
+                case 8:
+                case 4:
+                    _score += _score_map[number];
+                    break;
+                default:
+                    break;
+            }
+    return ;
 }
 
 bool ChessBoard::Up()
