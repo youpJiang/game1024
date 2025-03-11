@@ -7,6 +7,7 @@
 #include <unistd.h>
 #include <cstdlib>
 #include <ctime>
+#include <fstream>
 
 #include "common.hpp"
 #include "utils.hpp"
@@ -34,6 +35,7 @@ private:
     int RandomGenerate(bool isMove = true);
     bool Merge(std::vector<int>& vec);
     void CalScore(int number);
+    void SaveScore();
 
 public:
     ChessBoard();
@@ -84,8 +86,22 @@ void ChessBoard::PrintChessboard() const{
 
 ChessBoard::ChessBoard():_isWin(false), _score(0)
 {
+    std::ifstream inputFile("record.txt");
+    if(!inputFile.is_open())
+    {
+        std::cerr << "Record file can not open." << std::endl;
+        _score_record = 0;
+    }
+    inputFile >> _score_record;
+    if(inputFile.fail())
+    {
+        std::cerr << "Record read error!" << std::endl;
+    }
+    inputFile.close();
+
     _chessBoard.resize(_size, std::vector<int>(_size,0));
 
+    //number:score
     _score_map = {
         {1024,100},
         {512,80},
@@ -102,9 +118,28 @@ ChessBoard::ChessBoard():_isWin(false), _score(0)
     RandomGenerate();
 }
 
+void ChessBoard::SaveScore()
+{
+    if(_score > _score_record)
+    {
+        std::ofstream outFile("record.txt");
+
+        if(!outFile.is_open())
+        {
+            std::cerr << "Can not open the record file." << std::endl;
+            return ;
+        }
+        outFile << _score;
+        outFile.close();
+        Message("Your score has been recorded.");
+    }
+}
+
 void ChessBoard::Show()
 {
     system("clear");
+    Message("Record Score: ", false);
+    std::cout << _score_record << std::endl;
     Message("Current Score: ", false);
     std::cout << _score << std::endl;
     PrintChessboard();
@@ -140,6 +175,7 @@ void ChessBoard::Play()
         }
         else if('q' == key)
         {
+            SaveScore();
             exit(0);
         }
         else{
@@ -152,12 +188,14 @@ void ChessBoard::Play()
         //     Message("hold!");
         if(RandomGenerate(isMove))
         {
+            SaveScore();
             Message("~~~~~~~ YOU LOSE! ~~~~~~~");
             exit(0);
         }
         Show();
         if(_isWin)
         {
+            SaveScore();
             Message("******* YOU WIN! ******");
             exit(0);
         }
