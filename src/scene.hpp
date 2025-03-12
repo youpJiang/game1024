@@ -97,7 +97,7 @@ ChessBoard::ChessBoard():_isWin(false), _score(0)
     {
         std::cerr << "Record read error!" << std::endl;
     }
-    inputFile.close();
+    // inputFile.close();
 
     _chessBoard.resize(_size, std::vector<int>(_size,0));
 
@@ -130,7 +130,7 @@ void ChessBoard::SaveScore()
             return ;
         }
         outFile << _score;
-        outFile.close();
+        // outFile.close();
         Message("Your score has been recorded.");
     }
 }
