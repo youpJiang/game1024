@@ -89,14 +89,14 @@ ChessBoard::ChessBoard():_isWin(false), _score(0)
     std::ifstream inputFile("record.txt");
     if(!inputFile.is_open())
     {
-        std::cerr << "Record file can not open." << std::endl;
+        // std::cerr << "Record file can not open." << std::endl;
         _score_record = 0;
     }
     inputFile >> _score_record;
-    if(inputFile.fail())
-    {
-        std::cerr << "Record read error!" << std::endl;
-    }
+    // if(inputFile.fail())
+    // {
+    //     std::cerr << "Record read error!" << std::endl;
+    // }
     // inputFile.close();
 
     _chessBoard.resize(_size, std::vector<int>(_size,0));
@@ -132,6 +132,8 @@ void ChessBoard::SaveScore()
         outFile << _score;
         // outFile.close();
         Message("Your score has been recorded.");
+        Message("Game exit!");
+        sleep(2);
     }
 }
 

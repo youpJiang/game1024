@@ -35,13 +35,13 @@ inline void AskStart()
             if(1 == key)
             {
                 //play
-                Message("game start!");
+                Message("Game start!");
                 break;
             }
             //if 2
             else if(2 == key)
             {
-                Message("game exit!");
+                Message("Game exit!");
                 exit(0);
             }
             else
