@@ -158,7 +158,7 @@ void ChessBoard::Play()
     while(1)
     {
         bool isMove = false;
-        key = myGetch();
+        key = MyGetch();
         if('w' == key)
         {
             if(Up())
@@ -428,7 +428,7 @@ int ChessBoard::RandomGenerate(bool isMove)
         // std::cout << "randomIndexBoard is :" << randomIndexBoard << std::endl;
         int insertRow = 0;
         int insertCol = 0;
-        getRowColFromIndexBoard(randomIndexBoard, insertRow, insertCol);
+        GetRowColFromIndexBoard(randomIndexBoard, insertRow, insertCol);
         // std::cout << "insertRow is :" << insertRow << std::endl;
         // std::cout << "insertCol is :" << insertCol << std::endl;
         _chessBoard[insertRow][insertCol] = (0 == (rand() % 10))? 4 : 2;

@@ -6,7 +6,6 @@
 
 
 
-/// @brief 打印封面
 inline void PrintCover()
 {
     Message("===================================");
@@ -20,7 +19,7 @@ inline void PrintCover()
     Message("===================================");
 }
 
-/// @brief 询问是否开始游戏
+
 inline void AskStart()
 {
     Message("Please select:");
