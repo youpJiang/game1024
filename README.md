@@ -19,6 +19,6 @@ move and merge the same number to reach "1024"!
 1. add max score record.
 5. add operation instruction in show().
 
-# game screenshot
+# example
 ![本地图片](./cover.png "开始界面")
 ![本地图片](./eg.png "游戏界面")
