@@ -1,12 +1,12 @@
 # game1024
 1024 games with C++ code.
 
-## develop environment
-Ubuntu 20.04.4 LTS
+## platform support
+Linux & Windows
 
 # quick start
 1. run  `sh build.sh`
-2. run `./game1024`
+2. open the excutable file `game1024`
 
 ## game target
 move and merge the same number to reach "1024"!
