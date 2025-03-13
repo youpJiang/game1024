@@ -37,6 +37,8 @@ private:
     void SaveScore();
 protected:
     ChessBoard();
+    ChessBoard(const ChessBoard&)=delete;
+    ChessBoard& operator=(const ChessBoard)=delete;
 public:
     static ChessBoard& GetCBInstance();
 

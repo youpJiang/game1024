@@ -57,7 +57,7 @@ int main()
 {
     PrintCover();
     //init game
-    ChessBoard cb = ChessBoard::GetCBInstance();
+    ChessBoard& cb = ChessBoard::GetCBInstance();
     // AskStart
     AskStart();
 
