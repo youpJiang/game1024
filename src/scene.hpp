@@ -17,8 +17,8 @@ class ChessBoard
 {
 private:
     std::vector<std::vector<int>> _chessBoard;
-    static const int _size = 4;
-    static const int _cell_width = 5;
+    static constexpr int _size = 4;
+    static constexpr int _cell_width = 5;
     int _score;
     int _score_record;
     std::unordered_map<int, int> _score_map;
@@ -34,7 +34,6 @@ private:
     bool Right();
     int RandomGenerate(bool isMove = true);
     bool Merge(std::vector<int>& vec);
-    void CalScore(int number);
     void SaveScore();
 protected:
     ChessBoard();
@@ -90,20 +89,12 @@ void ChessBoard::PrintChessboard() const{
     }
 }
 
-ChessBoard::ChessBoard():_isWin(false), _score(0)
+ChessBoard::ChessBoard():_isWin(false), _score(0),_score_record(0)
 {
+    std::srand(std::time(0)); //set random seed.
+
     std::ifstream inputFile("record.txt");
-    if(!inputFile.is_open())
-    {
-        // std::cerr << "Record file can not open." << std::endl;
-        _score_record = 0;
-    }
-    inputFile >> _score_record;
-    // if(inputFile.fail())
-    // {
-    //     std::cerr << "Record read error!" << std::endl;
-    // }
-    // inputFile.close();
+    if(inputFile) inputFile >> _score_record;
 
     _chessBoard.resize(_size, std::vector<int>(_size,0));
 
@@ -139,7 +130,6 @@ void ChessBoard::SaveScore()
         // outFile.close();
         Message("Your score has been recorded.");
         Message("Game exit!");
-        sleep(2);
     }
 }
 
@@ -226,11 +216,11 @@ bool ChessBoard::Merge(std::vector<int>& vec)
         if(0 == *it)
         {
             //zero between two same non-zero numbers.
-            if(it+1 != vec.end() && *(it-1) == *(it+1))
+            if(it+1 != vec.end() && it != vec.begin() && *(it-1) == *(it+1))
             {
                 isMove = true;
                 *(it-1) *= 2;
-                CalScore(*(it-1));
+                _score += _score_map[*(it-1)];
                 it = vec.erase(it);
                 paddingCount += 2 ;
             }
@@ -251,7 +241,7 @@ bool ChessBoard::Merge(std::vector<int>& vec)
         {
             isMove = true;
             *it *= 2;
-            CalScore(*it);
+            _score += _score_map[*it];
             it = vec.erase(it+1);
             paddingCount++;
         }
@@ -270,29 +260,6 @@ bool ChessBoard::Merge(std::vector<int>& vec)
     return isMove;
 }
 
-void ChessBoard::CalScore(int number)
-{
-    switch(number)
-            {
-                case 1024:
-                    _isWin = true;
-                    _score += _score_map[number];
-                    break;
-                case 512:
-                case 256:
-                case 128:
-                case 64:
-                case 32:
-                case 16:
-                case 8:
-                case 4:
-                    _score += _score_map[number];
-                    break;
-                default:
-                    break;
-            }
-    return ;
-}
 
 bool ChessBoard::Up()
 {
@@ -428,7 +395,7 @@ int ChessBoard::RandomGenerate(bool isMove)
     //generate a position randomly and fill a number
     else if(isMove)
     {
-        std::srand(std::time(0)); //set random seed.
+
         int randomIndexVec = rand() % zeroBlocks.size();
         // std::cout << "zeroBlocks.size() is :" << zeroBlocks.size() << std::endl;
         // std::cout << "randomIndexVec is :" << randomIndexVec << std::endl;

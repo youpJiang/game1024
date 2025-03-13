@@ -16,8 +16,6 @@ move and merge the same number to reach "1024"!
 - quit:`q`
 
 # TODO
-1. add max score record.
-5. add operation instruction in show().
 
 # example
 ![本地图片](./cover.png "开始界面")
