@@ -150,9 +150,11 @@ void ChessBoard::Show() const
     #else
     system("clear");
     #endif //_WIN32
-    Message("Record Score: ", false);
+
+    Message("[Instruction]: Press <w> <s> <a> <d> to move");
+    Message("[Game Record]: ", false);
     std::cout << _score_record << std::endl;
-    Message("Current Score: ", false);
+    Message("[Current Score]: ", false);
     std::cout << _score << std::endl;
     PrintChessboard();
 }
