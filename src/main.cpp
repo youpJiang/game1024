@@ -57,11 +57,11 @@ int main()
 {
     PrintCover();
     //init game
-    ChessBoard cb;
+    ChessBoard* cb = ChessBoard::GetCBInstance();
     // AskStart
     AskStart();
 
-    cb.Play();
+    cb->Play();
 
 
     return 0;

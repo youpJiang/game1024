@@ -16,17 +16,19 @@
 class ChessBoard
 {
 private:
+    static ChessBoard* _cb_instance;
+
     std::vector<std::vector<int>> _chessBoard;
-    const int _size = 4;
-    const int _cell_width = 5;
-    int _score;  //target+score: 1024+100,512+80,256+50,128+30,64+15,32+10,16+5,8+3,4+2
+    static const int _size = 4;
+    static const int _cell_width = 5;
+    int _score;
     int _score_record;
     std::unordered_map<int, int> _score_map;
     bool _isWin;
 
-    void PrintChessboardBorder() const;
+    static void PrintChessboardBorder();
     void PrintChessboard() const;
-    void Show();
+    void Show() const;
 
     bool Up();
     bool Down();
@@ -36,15 +38,26 @@ private:
     bool Merge(std::vector<int>& vec);
     void CalScore(int number);
     void SaveScore();
-
-public:
+protected:
     ChessBoard();
-    // ~ChessBoard();
+public:
+    static ChessBoard* GetCBInstance();
 
     void Play();
 };
 
-void ChessBoard::PrintChessboardBorder() const
+ChessBoard* ChessBoard::_cb_instance = 0;
+
+ChessBoard* ChessBoard::GetCBInstance()
+{
+    if(0 == _cb_instance)
+    {
+        _cb_instance = new ChessBoard;
+    }
+    return _cb_instance;
+}
+
+void ChessBoard::PrintChessboardBorder()
 {
     Message("+", false);
     for (int i = 0; i < _size; ++i) {
@@ -137,7 +150,7 @@ void ChessBoard::SaveScore()
     }
 }
 
-void ChessBoard::Show()
+void ChessBoard::Show() const
 {
     #ifdef _WIN32
     system("cls");
