@@ -16,8 +16,6 @@
 class ChessBoard
 {
 private:
-    static ChessBoard* _cb_instance;
-
     std::vector<std::vector<int>> _chessBoard;
     static const int _size = 4;
     static const int _cell_width = 5;
@@ -41,19 +39,14 @@ private:
 protected:
     ChessBoard();
 public:
-    static ChessBoard* GetCBInstance();
+    static ChessBoard& GetCBInstance();
 
     void Play();
 };
 
-ChessBoard* ChessBoard::_cb_instance = 0;
-
-ChessBoard* ChessBoard::GetCBInstance()
+ChessBoard& ChessBoard::GetCBInstance()
 {
-    if(0 == _cb_instance)
-    {
-        _cb_instance = new ChessBoard;
-    }
+    static ChessBoard _cb_instance;
     return _cb_instance;
 }
 
