@@ -13,6 +13,13 @@
 #include "utils.hpp"
 
 
+enum class Direction {
+    Up,
+    Down,
+    Left,
+    Right
+};
+
 class ChessBoard
 {
 private:
@@ -28,10 +35,7 @@ private:
     void PrintChessboard() const;
     void Show() const;
 
-    bool Up();
-    bool Down();
-    bool Left();
-    bool Right();
+    bool Move(Direction);
     int RandomGenerate(bool isMove = true);
     bool Merge(std::vector<int>& vec);
     void SaveScore();
@@ -44,6 +48,7 @@ public:
 
     void Play();
 };
+
 
 ChessBoard& ChessBoard::GetCBInstance()
 {
@@ -91,7 +96,7 @@ void ChessBoard::PrintChessboard() const{
     }
 }
 
-ChessBoard::ChessBoard():_isWin(false), _score(0),_score_record(0)
+ChessBoard::ChessBoard():_isWin(false), _score(0), _score_record(0)
 {
     std::srand(std::time(0)); //set random seed.
 
@@ -112,7 +117,7 @@ ChessBoard::ChessBoard():_isWin(false), _score(0),_score_record(0)
         {8,3},
         {4,2}
     };
-    //init two number
+    //init two numbers
     RandomGenerate();
     RandomGenerate();
 }
@@ -161,22 +166,22 @@ void ChessBoard::Play()
         key = MyGetch();
         if('w' == key)
         {
-            if(Up())
+            if(Move(Direction::Up))
                 isMove = true;
         }
         else if('s' == key)
         {
-            if(Down())
+            if(Move(Direction::Down))
                 isMove = true;
         }
         else if('a' == key)
         {
-            if(Left())
+            if(Move(Direction::Left))
                 isMove = true;
         }
         else if('d' == key)
         {
-            if(Right())
+            if(Move(Direction::Right))
                 isMove = true;
         }
         else if('q' == key)
@@ -188,10 +193,6 @@ void ChessBoard::Play()
             Message("Invalid input! Please try again.");
             continue;
         }
-        // if(isMove)
-        //     Message("move!");
-        // else
-        //     Message("hold!");
         if(RandomGenerate(isMove))
         {
             SaveScore();
@@ -262,109 +263,43 @@ bool ChessBoard::Merge(std::vector<int>& vec)
     return isMove;
 }
 
-
-bool ChessBoard::Up()
-{
+bool ChessBoard::Move(Direction dir) {
     bool isMove = false;
-    //traverse every column
-    for(int col = 0; col < _size; ++col)
-    {
-        //to vector
-        std::vector<int> colVec;
-        for(int row = 0 ; row < _size; ++row)
-        {
-            colVec.push_back(_chessBoard[row][col]);
+
+    for (int i = 0; i < _size; ++i) {
+        std::vector<int> vec;
+
+        // get row or col accoding to direction
+        if (dir == Direction::Up || dir == Direction::Down) {
+            for (int j = 0; j < _size; ++j) {
+                int row = (dir == Direction::Up) ? j : _size - 1 - j;
+                vec.push_back(_chessBoard[row][i]);
+            }
+        } else if (dir == Direction::Left || dir == Direction::Right) {
+            for (int j = 0; j < _size; ++j) {
+                int col = (dir == Direction::Left) ? j : _size - 1 - j;
+                vec.push_back(_chessBoard[i][col]);
+            }
         }
-        //call Merge
-        if(Merge(colVec))
-        {
+
+        if (Merge(vec)) {
             isMove = true;
         }
-        //fill back
-        for(int row = 0 ; row < _size; ++row)
-        {
-            _chessBoard[row][col] = colVec[row];
+
+        // fill the chess back
+        if (dir == Direction::Up || dir == Direction::Down) {
+            for (int j = 0; j < _size; ++j) {
+                int row = (dir == Direction::Up) ? j : _size - 1 - j;
+                _chessBoard[row][i] = vec[j];
+            }
+        } else if (dir == Direction::Left || dir == Direction::Right) {
+            for (int j = 0; j < _size; ++j) {
+                int col = (dir == Direction::Left) ? j : _size - 1 - j;
+                _chessBoard[i][col] = vec[j];
+            }
         }
     }
-    return isMove;
-}
 
-bool ChessBoard::Down()
-{
-    bool isMove = false;
-    //traverse every column
-    for(int col = 0; col < _size; ++col)
-    {
-        //to vector
-        std::vector<int> colVec;
-        for(int row = _size-1 ; row > -1; --row)
-        {
-            colVec.push_back(_chessBoard[row][col]);
-        }
-        //call Merge
-        if(Merge(colVec))
-        {
-            isMove = true;
-        }
-        //fill back
-        for(int row = _size-1 ; row > -1; --row)
-        {
-            _chessBoard[_size-row-1][col] = colVec[row];
-        }
-    }
-    return isMove;
-}
-
-bool ChessBoard::Left()
-{
-    bool isMove = false;
-    //traverse every row
-    for(int row = 0; row < _size; ++row)
-    {
-        //to vector
-        std::vector<int> rowVec;
-        for(int col = 0 ; col < _size; ++col)
-        {
-            rowVec.push_back(_chessBoard[row][col]);
-        }
-        //call Merge
-        if(Merge(rowVec))
-        {
-            isMove = true;
-        }
-        //fill back
-        for(int col = 0 ; col < _size; ++col)
-        {
-            _chessBoard[row][col] = rowVec[col];
-        }
-    }
-    return isMove;
-}
-
-bool ChessBoard::Right()
-{
-    bool isMove = false;
-    //traverse every row
-
-    for(int row = 0; row < _size; ++row)
-    {
-        //to vector
-        std::vector<int> rowVec;
-        for(int col = _size-1 ; col > -1; --col)
-        {
-            rowVec.push_back(_chessBoard[row][col]);
-        }
-        //call Merge
-        if(Merge(rowVec))
-        {
-            isMove = true;
-        }
-        //fill back
-        for(int col = 0 ; col < _size; ++col)
-        {
-            _chessBoard[row][_size-col-1] = rowVec[col];
-        }
-    }
     return isMove;
 }
 
@@ -380,12 +315,6 @@ int ChessBoard::RandomGenerate(bool isMove)
             {
                 zeroBlocks.push_back(4*row+col);
                 flag = true;
-                // if(isMove)
-                // {
-                //     it = (0 == _randomSeed)? 4 : 2;
-                //     _randomSeed++;
-                //     _randomSeed %= 10;
-                // }
             }
         }
     }
@@ -397,22 +326,14 @@ int ChessBoard::RandomGenerate(bool isMove)
     //generate a position randomly and fill a number
     else if(isMove)
     {
-
         int randomIndexVec = rand() % zeroBlocks.size();
-        // std::cout << "zeroBlocks.size() is :" << zeroBlocks.size() << std::endl;
-        // std::cout << "randomIndexVec is :" << randomIndexVec << std::endl;
         int randomIndexBoard = zeroBlocks[randomIndexVec];
-        // std::cout << "randomIndexBoard is :" << randomIndexBoard << std::endl;
         int insertRow = 0;
         int insertCol = 0;
         GetRowColFromIndexBoard(randomIndexBoard, insertRow, insertCol);
-        // std::cout << "insertRow is :" << insertRow << std::endl;
-        // std::cout << "insertCol is :" << insertCol << std::endl;
         _chessBoard[insertRow][insertCol] = (0 == (rand() % 10))? 4 : 2;
     }
     return 0;
 }
-
-
 
 #endif // SCENE_HPP
